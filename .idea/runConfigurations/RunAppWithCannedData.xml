@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="RunAppWithCannedData" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.jeff.fischman.spex.App" />
-    <module name="tradeprocessor" />
+    <module name="trade-processor" />
     <option name="PROGRAM_PARAMETERS" value="-canned" />
     <extension name="coverage">
       <pattern>

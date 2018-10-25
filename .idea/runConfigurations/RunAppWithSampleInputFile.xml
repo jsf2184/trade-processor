@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="RunAppWithAlternateFile" type="Application" factoryName="Application">
+  <configuration default="false" name="RunAppWithSampleInputFile" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.jeff.fischman.spex.App" />
-    <module name="tradeprocessor" />
-    <option name="PROGRAM_PARAMETERS" value="alternateInput.csv" />
+    <module name="trade-processor" />
+    <option name="PROGRAM_PARAMETERS" value="sampleInput.csv" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.jeff.fischman.spex.messages.*" />
