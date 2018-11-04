@@ -1,9 +1,10 @@
-package com.jeff.fischman.spex.process.components;
+package com.jeff.fischman.spex.process;
 
 import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.messages.TradeParser;
 import com.jeff.fischman.spex.process.Instrument;
 import com.jeff.fischman.spex.process.InstrumentStore;
+import com.jeff.fischman.spex.process.LineProcessor;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;

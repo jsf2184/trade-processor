@@ -1,4 +1,6 @@
-package com.jeff.fischman.spex.process.components;
+package com.jeff.fischman.spex.process.calculator.components;
+
+import com.jeff.fischman.spex.process.calculator.components.Accumulator;
 
 public class MaxValueAccumulator implements Accumulator {
     private long _max;

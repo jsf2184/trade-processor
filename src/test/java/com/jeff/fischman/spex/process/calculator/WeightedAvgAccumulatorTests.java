@@ -1,5 +1,7 @@
-package com.jeff.fischman.spex.process.components;
+package com.jeff.fischman.spex.process.calculator;
 
+import com.jeff.fischman.spex.process.calculator.WeightedAvgAccumulator;
+import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
 import org.junit.Assert;
 import org.junit.Test;
 

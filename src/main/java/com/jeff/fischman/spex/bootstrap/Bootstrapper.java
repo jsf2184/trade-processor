@@ -3,10 +3,9 @@ package com.jeff.fischman.spex.bootstrap;
 import com.jeff.fischman.spex.messages.TradeParser;
 import com.jeff.fischman.spex.process.InstrumentStore;
 import com.jeff.fischman.spex.process.Processor;
-import com.jeff.fischman.spex.process.components.LineProcessor;
+import com.jeff.fischman.spex.process.LineProcessor;
 import com.jeff.fischman.spex.process.output.Printer;
 
-import java.io.IOException;
 import java.util.stream.Stream;
 
 public class Bootstrapper {

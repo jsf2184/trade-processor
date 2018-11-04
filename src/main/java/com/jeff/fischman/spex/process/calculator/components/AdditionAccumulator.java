@@ -1,6 +1,8 @@
-package com.jeff.fischman.spex.process.components;
+package com.jeff.fischman.spex.process.calculator.components;
 
-public class AdditionAccumulator implements  Accumulator{
+import com.jeff.fischman.spex.process.calculator.components.Accumulator;
+
+public class AdditionAccumulator implements Accumulator {
     private long _value;
 
     public AdditionAccumulator() {

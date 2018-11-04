@@ -1,4 +1,4 @@
-package com.jeff.fischman.spex.process.components;
+package com.jeff.fischman.spex.process;
 
 import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.messages.TradeParser;

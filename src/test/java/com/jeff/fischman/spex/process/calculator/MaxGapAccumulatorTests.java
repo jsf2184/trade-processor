@@ -1,5 +1,8 @@
-package com.jeff.fischman.spex.process.components;
+package com.jeff.fischman.spex.process.calculator;
 
+import com.jeff.fischman.spex.process.calculator.components.Accumulator;
+import com.jeff.fischman.spex.process.calculator.MaxGapAccumulator;
+import com.jeff.fischman.spex.process.calculator.components.MaxValueAccumulator;
 import org.junit.Assert;
 import org.junit.Test;
 

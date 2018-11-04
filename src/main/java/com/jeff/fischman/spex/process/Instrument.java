@@ -2,10 +2,10 @@ package com.jeff.fischman.spex.process;
 
 import com.jeff.fischman.spex.messages.InstrumentSummary;
 import com.jeff.fischman.spex.messages.Trade;
-import com.jeff.fischman.spex.process.components.AdditionAccumulator;
-import com.jeff.fischman.spex.process.components.MaxGapAccumulator;
-import com.jeff.fischman.spex.process.components.MaxValueAccumulator;
-import com.jeff.fischman.spex.process.components.WeightedAvgAccumulator;
+import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
+import com.jeff.fischman.spex.process.calculator.MaxGapAccumulator;
+import com.jeff.fischman.spex.process.calculator.components.MaxValueAccumulator;
+import com.jeff.fischman.spex.process.calculator.WeightedAvgAccumulator;
 
 public class Instrument {
     private final String _symbol;

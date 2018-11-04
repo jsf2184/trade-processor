@@ -1,4 +1,6 @@
-package com.jeff.fischman.spex.process.components;
+package com.jeff.fischman.spex.process.calculator;
+
+import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
 
 public class WeightedAvgAccumulator {
     private AdditionAccumulator _runningCostTotal;
