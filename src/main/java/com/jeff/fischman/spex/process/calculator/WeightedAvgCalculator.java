@@ -2,16 +2,16 @@ package com.jeff.fischman.spex.process.calculator;
 
 import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
 
-public class WeightedAvgAccumulator {
+public class WeightedAvgCalculator implements OutputCalculator {
     private AdditionAccumulator _runningCostTotal;
     private AdditionAccumulator _runningQtyTotal;
 
-    public WeightedAvgAccumulator() {
+    public WeightedAvgCalculator() {
         this(new AdditionAccumulator(), new AdditionAccumulator());
     }
 
-    public WeightedAvgAccumulator(AdditionAccumulator runningCostTotal,
-                                  AdditionAccumulator runningQtyTotal)
+    public WeightedAvgCalculator(AdditionAccumulator runningCostTotal,
+                                 AdditionAccumulator runningQtyTotal)
     {
         _runningCostTotal = runningCostTotal;
         _runningQtyTotal = runningQtyTotal;
@@ -19,7 +19,7 @@ public class WeightedAvgAccumulator {
 
     public void onTrade(long price, long qty) {
         if (price <= 0 || qty <= 0) {
-            throw new RuntimeException("WeightedAvgAccumulator.onTrade(): price and qty must be > 0");
+            throw new RuntimeException("WeightedAvgCalculator.onTrade(): price and qty must be > 0");
         }
         long tradeValue = price * qty;
         _runningCostTotal.onValue(tradeValue);

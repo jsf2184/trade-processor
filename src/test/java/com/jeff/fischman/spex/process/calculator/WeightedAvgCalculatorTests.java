@@ -1,6 +1,5 @@
 package com.jeff.fischman.spex.process.calculator;
 
-import com.jeff.fischman.spex.process.calculator.WeightedAvgAccumulator;
 import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,7 +14,7 @@ import static org.mockito.Mockito.*;
 // Those 'delegation' tests use mocked implementations of AdditionAccumulator
 //
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class WeightedAvgAccumulatorTests {
+public class WeightedAvgCalculatorTests {
     // *************************************************************************************
     // Start with "integration" tests that tests a sequence of calls to WeightedValueAccumulator
     // using true instantiations of its component class: AdditionAccumulator
@@ -23,13 +22,13 @@ public class WeightedAvgAccumulatorTests {
 
     @Test
     public void testNewWeightedAvgAccumulatorReturnsZero() {
-        WeightedAvgAccumulator sut = new WeightedAvgAccumulator();
+        OutputCalculator sut = new WeightedAvgCalculator();
         Assert.assertEquals(0, sut.getValue());
     }
 
     @Test
     public void testScenarioWithOccasionalTruncation() {
-        WeightedAvgAccumulator sut = new WeightedAvgAccumulator();
+        WeightedAvgCalculator sut = new WeightedAvgCalculator();
 
         sut.onTrade(50, 1);
         Assert.assertEquals(50, sut.getValue());
@@ -58,7 +57,7 @@ public class WeightedAvgAccumulatorTests {
     public void testDelegationDuringOnTrade() {
         AdditionAccumulator runningCostTotal = mock(AdditionAccumulator.class);
         AdditionAccumulator runningQtyTotal = mock(AdditionAccumulator.class);
-        WeightedAvgAccumulator sut = new WeightedAvgAccumulator(runningCostTotal, runningQtyTotal);
+        WeightedAvgCalculator sut = new WeightedAvgCalculator(runningCostTotal, runningQtyTotal);
         sut.onTrade(60, 5);
         verify(runningCostTotal, times(1)).onValue(300); // passes the product to runningCostTotal
         verify(runningQtyTotal, times(1)).onValue(5);    // passes the qty to runningCostTotal
@@ -68,7 +67,7 @@ public class WeightedAvgAccumulatorTests {
     public void testDelegationDuringGetValue() {
         AdditionAccumulator runningCostTotal = mock(AdditionAccumulator.class);
         AdditionAccumulator runningQtyTotal = mock(AdditionAccumulator.class);
-        WeightedAvgAccumulator sut = new WeightedAvgAccumulator(runningCostTotal, runningQtyTotal);
+        OutputCalculator sut = new WeightedAvgCalculator(runningCostTotal, runningQtyTotal);
         when(runningCostTotal.getValue()).thenReturn(300L);
         when(runningQtyTotal.getValue()).thenReturn(5L);
         Assert.assertEquals(60L, sut.getValue());
@@ -80,7 +79,7 @@ public class WeightedAvgAccumulatorTests {
     public void testDelegationAndTruncationInGetValue() {
         AdditionAccumulator runningCostTotal = mock(AdditionAccumulator.class);
         AdditionAccumulator runningQtyTotal = mock(AdditionAccumulator.class);
-        WeightedAvgAccumulator sut = new WeightedAvgAccumulator(runningCostTotal, runningQtyTotal);
+        OutputCalculator sut = new WeightedAvgCalculator(runningCostTotal, runningQtyTotal);
         when(runningCostTotal.getValue()).thenReturn(299L);
         when(runningQtyTotal.getValue()).thenReturn(5L);
         Assert.assertEquals(59L, sut.getValue());

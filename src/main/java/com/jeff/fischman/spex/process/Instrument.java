@@ -2,37 +2,37 @@ package com.jeff.fischman.spex.process;
 
 import com.jeff.fischman.spex.messages.InstrumentSummary;
 import com.jeff.fischman.spex.messages.Trade;
-import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
-import com.jeff.fischman.spex.process.calculator.MaxGapAccumulator;
-import com.jeff.fischman.spex.process.calculator.components.MaxValueAccumulator;
-import com.jeff.fischman.spex.process.calculator.WeightedAvgAccumulator;
+import com.jeff.fischman.spex.process.calculator.MaxPriceCalculator;
+import com.jeff.fischman.spex.process.calculator.TimeGapCalculator;
+import com.jeff.fischman.spex.process.calculator.TotalVolumeCalculator;
+import com.jeff.fischman.spex.process.calculator.WeightedAvgCalculator;
 
 public class Instrument {
     private final String _symbol;
-    private final MaxValueAccumulator _maxPriceAccumulator;
-    private final MaxGapAccumulator _timeGapAccumulator;
-    private final AdditionAccumulator _totalVolumeAccumulator;
-    private final WeightedAvgAccumulator _weightedAvgAccumulator;
+    private final MaxPriceCalculator _maxPriceCalculator;
+    private final TimeGapCalculator _timeGapCalculator;
+    private final TotalVolumeCalculator _totalVolumeCalculator;
+    private final WeightedAvgCalculator _weightedAvgCalculator;
 
     public Instrument(String symbol) {
         this(symbol,
-             new MaxValueAccumulator(),
-             new MaxGapAccumulator(),
-             new AdditionAccumulator(),
-             new WeightedAvgAccumulator());
+             new MaxPriceCalculator(),
+             new TimeGapCalculator(),
+             new TotalVolumeCalculator(),
+             new WeightedAvgCalculator());
     }
 
     public Instrument(String symbol,
-                      MaxValueAccumulator maxPriceAccumulator,
-                      MaxGapAccumulator timeGapAccumulator,
-                      AdditionAccumulator totalVolumeAccumulator,
-                      WeightedAvgAccumulator weightedAvgAccumulator)
+                      MaxPriceCalculator maxPriceCalculator,
+                      TimeGapCalculator timeGapCalculator,
+                      TotalVolumeCalculator totalVolumeCalculator,
+                      WeightedAvgCalculator weightedAvgCalculator)
     {
         _symbol = symbol;
-        _maxPriceAccumulator = maxPriceAccumulator;
-        _timeGapAccumulator = timeGapAccumulator;
-        _totalVolumeAccumulator = totalVolumeAccumulator;
-        _weightedAvgAccumulator = weightedAvgAccumulator;
+        _maxPriceCalculator = maxPriceCalculator;
+        _timeGapCalculator = timeGapCalculator;
+        _totalVolumeCalculator = totalVolumeCalculator;
+        _weightedAvgCalculator = weightedAvgCalculator;
     }
 
     public String getSymbol() {
@@ -43,18 +43,18 @@ public class Instrument {
         long price = trade.getPrice();
         long quantity = trade.getQuantity();
         long timestamp = trade.getTimestamp();
-        _maxPriceAccumulator.onValue(price);
-        _totalVolumeAccumulator.onValue(quantity);
-        _timeGapAccumulator.onValue(timestamp);
-        _weightedAvgAccumulator.onTrade(price, quantity);
+        _maxPriceCalculator.onValue(price);
+        _totalVolumeCalculator.onValue(quantity);
+        _timeGapCalculator.onValue(timestamp);
+        _weightedAvgCalculator.onTrade(price, quantity);
     }
 
     public InstrumentSummary getInstrumentSummary() {
         InstrumentSummary res = new InstrumentSummary(_symbol,
-                                                      _timeGapAccumulator.getValue(),
-                                                      _totalVolumeAccumulator.getValue(),
-                                                      _weightedAvgAccumulator.getValue(),
-                                                      _maxPriceAccumulator.getValue());
+                                                      _timeGapCalculator.getValue(),
+                                                      _totalVolumeCalculator.getValue(),
+                                                      _weightedAvgCalculator.getValue(),
+                                                      _maxPriceCalculator.getValue());
         return res;
     }
 
