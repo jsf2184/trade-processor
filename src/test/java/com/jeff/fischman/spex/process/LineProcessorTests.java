@@ -1,14 +1,19 @@
 package com.jeff.fischman.spex.process;
 
+import com.jeff.fischman.spex.messages.InstrumentSummary;
 import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.messages.TradeParser;
-import com.jeff.fischman.spex.process.Instrument;
-import com.jeff.fischman.spex.process.InstrumentStore;
-import com.jeff.fischman.spex.process.LineProcessor;
+import org.junit.Assert;
 import org.junit.Test;
+import sun.util.resources.cldr.ar.CalendarData_ar_SY;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class LineProcessorTests {
     private String priorTradeStr = "122,aaa,40,99";
     private String goodTradeStr1 = "123,aaa,50,100";
@@ -20,7 +25,7 @@ public class LineProcessorTests {
     private Trade goodTrade3 = new Trade(124L, "aaa", 9L,  102L);
     private String badTradeStr = "bad";
     private InstrumentStore _instrumentStore;
-    private Instrument _instrument;
+    private MockInstrument _instrument;
 
     @Test
     public void testsSkipsInstrumentStoreIfLineDoesntParse() {
@@ -34,9 +39,8 @@ public class LineProcessorTests {
         LineProcessor sut = createSut();
         sut.processLine(goodTradeStr1, _instrumentStore);
         verify(_instrumentStore, times(1)).findOrAddInstrument("aaa");
-        verify(_instrument, times(1)).onTrade(goodTrade1);
+        _instrument.validateExpectedTrades(Arrays.asList(goodTrade1));
         verifyNoMoreInteractions(_instrumentStore);
-        verifyNoMoreInteractions(_instrument);
     }
 
     @Test
@@ -44,20 +48,19 @@ public class LineProcessorTests {
         LineProcessor sut = createSut();
         sut.processLine(goodTradeStr1, _instrumentStore);
         verify(_instrumentStore, times(1)).findOrAddInstrument("aaa");
-        verify(_instrument, times(1)).onTrade(goodTrade1);
+        _instrument.validateExpectedTrades(Arrays.asList(goodTrade1));
 
         // The 2nd trade has a larger timestamp than the 1st trade
         sut.processLine(goodTradeStr2, _instrumentStore);
         verify(_instrumentStore, times(2)).findOrAddInstrument("aaa");
-        verify(_instrument, times(1)).onTrade(goodTrade2);
+        _instrument.validateExpectedTrades(Arrays.asList(goodTrade1, goodTrade2));
 
         // The 3rd trade has the same timestamp as the 2nd trade
         sut.processLine(goodTradeStr3, _instrumentStore);
         verify(_instrumentStore, times(3)).findOrAddInstrument("aaa");
-        verify(_instrument, times(1)).onTrade(goodTrade3);
+        _instrument.validateExpectedTrades(Arrays.asList(goodTrade1, goodTrade2, goodTrade3));
 
         verifyNoMoreInteractions(_instrumentStore);
-        verifyNoMoreInteractions(_instrument);
     }
 
     @Test
@@ -65,7 +68,7 @@ public class LineProcessorTests {
         LineProcessor sut = createSut();
         sut.processLine(goodTradeStr1, _instrumentStore);
         verify(_instrumentStore, times(1)).findOrAddInstrument("aaa");
-        verify(_instrument, times(1)).onTrade(goodTrade1);
+        _instrument.validateExpectedTrades(Arrays.asList(goodTrade1));
 
         // now feed it an out of order tradeStr.
         sut.processLine(priorTradeStr, _instrumentStore);
@@ -73,18 +76,41 @@ public class LineProcessorTests {
         // dont use instrumentStore 2ndTime since out of order trade received
         verify(_instrumentStore, times(1)).findOrAddInstrument("aaa");
         verifyNoMoreInteractions(_instrumentStore);
-        verifyNoMoreInteractions(_instrument);
     }
 
 
     LineProcessor createSut() {
         TradeParser tradeParser = new TradeParser();
         _instrumentStore = mock(InstrumentStore.class);
-        _instrument = mock(Instrument.class);
+        _instrument = new MockInstrument();
         when(_instrumentStore.findOrAddInstrument("aaa")).thenReturn(_instrument);
         LineProcessor sut = new LineProcessor(tradeParser);
         return sut;
+    }
 
+    // For testing purposes had to create this special MockInstrument due to mockito problems
+    // that came up once our Trade class became mutable.
+    //
+    public static class MockInstrument implements Instrument {
+        List<Trade> _submittedTrades = new ArrayList<>();
+        @Override
+        public String getSymbol() {
+            return null;
+        }
+
+        @Override
+        public void onTrade(Trade trade) {
+            _submittedTrades.add(new Trade(trade));
+        }
+
+        @Override
+        public InstrumentSummary getInstrumentSummary() {
+            return null;
+        }
+
+        public void validateExpectedTrades(List<Trade> expected) {
+            Assert.assertEquals(expected, _submittedTrades);
+        }
     }
 
 }

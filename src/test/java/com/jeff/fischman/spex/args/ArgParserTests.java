@@ -1,9 +1,12 @@
 package com.jeff.fischman.spex.args;
 
+import com.jeff.fischman.spex.OutputField;
 import com.jeff.fischman.spex.utility.StreamUtility;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
@@ -16,7 +19,7 @@ public class ArgParserTests {
     private static Stream<String> DummyStream = Stream.of("abc");
 
     @Test
-    public void testWithTooManyArgs() {
+    public void testWithConflictingArgs() {
         verifyBadParse(new String[] {"-canned", "inputFile.csv"});
     }
 
@@ -33,6 +36,7 @@ public class ArgParserTests {
         Assert.assertTrue(sut.parse());
         verify(streamUtility, times(1)).getFileStream(ArgParser.DefaultInputFile);
         Assert.assertSame(DummyStream, sut.getInputStream());
+        Assert.assertEquals(Arrays.asList(OutputField.values()), sut.getOutputFields());
     }
 
     @Test
@@ -65,6 +69,47 @@ public class ArgParserTests {
         Assert.assertSame(DummyStream, sut.getInputStream());
     }
 
+    @Test
+    public void testWithAlteredOutputChars() {
+        StreamUtility streamUtility = mock(StreamUtility.class);
+        when(streamUtility.getCannedSampleInputStream()).thenReturn(DummyStream);
+        // shuffled order
+        ArgParser sut = new ArgParser(new String[] {"-output", "vgmw"}, streamUtility);
+        Assert.assertTrue(sut.parse());
+        List<OutputField> actual = sut.getOutputFields();
+        List<OutputField> expected = Arrays.asList(OutputField.volume,
+                                                   OutputField.timegap,
+                                                   OutputField.maxprice,
+                                                   OutputField.wavg);
+        Assert.assertEquals(expected, actual);
+
+    }
+
+    @Test
+    public void testWithDuplicateOutputChars() {
+        StreamUtility streamUtility = mock(StreamUtility.class);
+        when(streamUtility.getCannedSampleInputStream()).thenReturn(DummyStream);
+        // shuffled order
+        ArgParser sut = new ArgParser(new String[] {"-output", "vgmwg"}, streamUtility);
+        Assert.assertFalse(sut.parse());
+    }
+    @Test
+    public void testWithBadOutputChars() {
+        StreamUtility streamUtility = mock(StreamUtility.class);
+        when(streamUtility.getCannedSampleInputStream()).thenReturn(DummyStream);
+        // shuffled order
+        ArgParser sut = new ArgParser(new String[] {"-output", "vgmx"}, streamUtility);
+        Assert.assertFalse(sut.parse());
+    }
+
+    @Test
+    public void testWithOutputSpecifiedButNoOutputChars() {
+        StreamUtility streamUtility = mock(StreamUtility.class);
+        when(streamUtility.getCannedSampleInputStream()).thenReturn(DummyStream);
+        // shuffled order
+        ArgParser sut = new ArgParser(new String[] {"-output"}, streamUtility);
+        Assert.assertFalse(sut.parse());
+    }
 
     private void verifyBadParse(String[] args) {
         ArgParser sut = new ArgParser(args);

@@ -2,6 +2,12 @@ package com.jeff.fischman.spex.messages;
 
 public class TradeParser {
 
+    MutableTrade _mutableTrade;
+
+    public TradeParser() {
+        _mutableTrade = new MutableTrade();
+    }
+
     public Trade parseTrade(String line) throws Exception
     {
         line = removeSpaces(line);
@@ -13,11 +19,11 @@ public class TradeParser {
         if (symbol.length() == 0) {
             throw new Exception("Trade.parseTrade() symbol field cannot be empty");
         }
-        Long timestamp = parseLong(parts[0], true);
-        Long quantity = parseLong(parts[2], false);
-        Long price = parseLong(parts[3], false);
-        Trade res = new Trade(timestamp, symbol, quantity, price);
-        return  res;
+        long timestamp = parseLong(parts[0], true);
+        long quantity = parseLong(parts[2], false);
+        long price = parseLong(parts[3], false);
+        _mutableTrade.set(timestamp, symbol, quantity, price);
+        return _mutableTrade;
     }
 
     public static String removeSpaces(String s) throws Exception{

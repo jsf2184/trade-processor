@@ -2,8 +2,6 @@ package com.jeff.fischman.spex.process;
 
 import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.messages.TradeParser;
-import com.jeff.fischman.spex.process.Instrument;
-import com.jeff.fischman.spex.process.InstrumentStore;
 
 public class LineProcessor {
     private final TradeParser _tradeParser;

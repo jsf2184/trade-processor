@@ -1,5 +1,6 @@
 package com.jeff.fischman.spex.process.calculator;
 
+import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.process.calculator.components.MaxValueAccumulator;
 
 public class TimeGapCalculator implements OutputCalculator {
@@ -13,6 +14,11 @@ public class TimeGapCalculator implements OutputCalculator {
     public TimeGapCalculator(MaxValueAccumulator maxValueAccumulator) {
         _maxValueAccumulator = maxValueAccumulator;
         _prior = -1;
+    }
+
+    @Override
+    public void onTrade(Trade trade) {
+        onValue(trade.getTimestamp());
     }
 
     public void onValue(Long timestamp) {

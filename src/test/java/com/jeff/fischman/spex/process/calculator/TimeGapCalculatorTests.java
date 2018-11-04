@@ -1,5 +1,6 @@
 package com.jeff.fischman.spex.process.calculator;
 
+import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.process.calculator.components.MaxValueAccumulator;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,24 +28,30 @@ public class TimeGapCalculatorTests {
 
     @Test
     public void testIntegrationScenario() {
-        TimeGapCalculator sut = new TimeGapCalculator();
+        OutputCalculator sut = new TimeGapCalculator();
         Assert.assertEquals(0L, sut.getValue());
 
-        sut.onValue(7L);
+        sut.onTrade(mockTrade(7L));
         Assert.assertEquals(0L, sut.getValue());
 
-        sut.onValue(12L);  // Gap of 5
+        sut.onTrade(mockTrade(12L));  // Gap of 5
         Assert.assertEquals(5L, sut.getValue());
 
-        sut.onValue(14L);  // Gap of 2 is less than 5
+        sut.onTrade(mockTrade(14L));  // Gap of 2 is less than 5
         Assert.assertEquals(5L, sut.getValue());
 
-        sut.onValue(19L);  // Gap of 5, max is still 5
+        sut.onTrade(mockTrade(19L));  // Gap of 5, max is still 5
         Assert.assertEquals(5L, sut.getValue());
 
-        sut.onValue(25L);  // Gap of 6 is our new max
+        sut.onTrade(mockTrade(25L));  // Gap of 6 is our new max
         Assert.assertEquals(6L, sut.getValue());
 
+    }
+
+    public static Trade mockTrade(long timestamp) {
+        Trade trade = mock(Trade.class);
+        when(trade.getTimestamp()).thenReturn(timestamp);
+        return trade;
     }
 
 
@@ -56,8 +63,8 @@ public class TimeGapCalculatorTests {
     public void testFirstInvocationPassesZeroToMaxValueAccumulatorAndReturnsZero() {
         MaxValueAccumulator maxValueAccumulator = mock(MaxValueAccumulator.class);
         when(maxValueAccumulator.onValue(3476L)).thenReturn(0L);
-        TimeGapCalculator sut = new TimeGapCalculator(maxValueAccumulator);
-        sut.onValue(3476L);
+        OutputCalculator sut = new TimeGapCalculator(maxValueAccumulator);
+        sut.onTrade(mockTrade(3476L));
         Assert.assertEquals(0L, sut.getValue());
         verify(maxValueAccumulator, times(1)).onValue(0L);
     }
@@ -67,13 +74,13 @@ public class TimeGapCalculatorTests {
 
         // Prime it with a 1st invocation
         MaxValueAccumulator maxValueAccumulator = mock(MaxValueAccumulator.class);
-        TimeGapCalculator sut = new TimeGapCalculator(maxValueAccumulator);
-        sut.onValue(3476L);
+        OutputCalculator sut = new TimeGapCalculator(maxValueAccumulator);
+        sut.onTrade(mockTrade(3476L));
 
         // Now, in this subsequent invocation, see that we pass the time difference to the maxValueAccumulator
         when(maxValueAccumulator.onValue(5L)).thenReturn(5L);
         when(maxValueAccumulator.getValue()).thenReturn(5L);
-        sut.onValue(3481L);
+        sut.onTrade(mockTrade(3481L));
         Assert.assertEquals(5, sut.getValue()); // should return 3581 - 3476  = 5
         verify(maxValueAccumulator, times(1)).onValue(5L);
     }
@@ -81,12 +88,12 @@ public class TimeGapCalculatorTests {
     @Test
     public void testSmallerTimestampCausesRuntimeException() {
         MaxValueAccumulator maxValueAccumulator = mock(MaxValueAccumulator.class);
-        TimeGapCalculator sut = new TimeGapCalculator(maxValueAccumulator);
-        sut.onValue(3476L);
+        OutputCalculator sut = new TimeGapCalculator(maxValueAccumulator);
+        sut.onTrade(mockTrade(3476L));
 
         boolean caught = false;
         try {
-            sut.onValue(3475L);
+            sut.onTrade(mockTrade(3475L));
         } catch (RuntimeException ignore) {
             caught = true;
         }

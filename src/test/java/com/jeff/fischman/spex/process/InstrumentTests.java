@@ -11,12 +11,10 @@ package com.jeff.fischman.spex.process;
 // Those 'delegation' tests use mocked implementations of the component classes
 //
 
+import com.jeff.fischman.spex.OutputField;
 import com.jeff.fischman.spex.messages.InstrumentSummary;
 import com.jeff.fischman.spex.messages.Trade;
-import com.jeff.fischman.spex.process.calculator.MaxPriceCalculator;
-import com.jeff.fischman.spex.process.calculator.TimeGapCalculator;
-import com.jeff.fischman.spex.process.calculator.TotalVolumeCalculator;
-import com.jeff.fischman.spex.process.calculator.WeightedAvgCalculator;
+import com.jeff.fischman.spex.process.calculator.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,7 +32,11 @@ public class InstrumentTests {
                 new Trade(52931654, "aaa", 9, 1077)
         );
 
-        Instrument sut = new Instrument("aaa");
+        List<OutputField> outputFields = Arrays.asList(OutputField.values());
+        OutputCalculatorFactory outputCalculatorFactory = new OutputCalculatorFactory(outputFields);
+        List<OutputCalculator> calculators = outputCalculatorFactory.create();
+
+        Instrument sut = new InstrumentImpl("aaa", calculators);
         trades.forEach(sut::onTrade);
         InstrumentSummary instrumentSummary = sut.getInstrumentSummary();
         validateInstrumentSummary(instrumentSummary);
@@ -43,22 +45,25 @@ public class InstrumentTests {
     @Test
     public void testOnTradeDelegation() {
         Trade t = new Trade(52924702, "aaa", 13, 1136);
+
         MaxPriceCalculator maxPriceCalculator = mock(MaxPriceCalculator.class);
         TimeGapCalculator timeGapCalculator = mock(TimeGapCalculator.class);
         TotalVolumeCalculator totalVolumeCalculator = mock(TotalVolumeCalculator.class);
         WeightedAvgCalculator weightedAvgCalculator = mock(WeightedAvgCalculator.class);
 
-        Instrument sut = new Instrument("aaa",
-                                        maxPriceCalculator,
-                                        timeGapCalculator,
-                                        totalVolumeCalculator,
-                                        weightedAvgCalculator);
+        List<OutputCalculator> calculators = Arrays.asList(
+                timeGapCalculator,
+                totalVolumeCalculator,
+                weightedAvgCalculator,
+                maxPriceCalculator);
+
+        Instrument sut = new InstrumentImpl("aaa", calculators);
 
         sut.onTrade(t);
-        verify(maxPriceCalculator, times(1)).onValue(t.getPrice());
-        verify(timeGapCalculator, times(1)).onValue(t.getTimestamp());
-        verify(totalVolumeCalculator, times(1)).onValue(t.getQuantity());
-        verify(weightedAvgCalculator, times(1)).onTrade(t.getPrice(), t.getQuantity());
+        verify(maxPriceCalculator, times(1)).onTrade(t);
+        verify(timeGapCalculator, times(1)).onTrade(t);
+        verify(totalVolumeCalculator, times(1)).onTrade(t);
+        verify(weightedAvgCalculator, times(1)).onTrade(t);
     }
 
     @Test
@@ -75,11 +80,14 @@ public class InstrumentTests {
         WeightedAvgCalculator weightedAvgCalculator = mock(WeightedAvgCalculator.class);
         when(weightedAvgCalculator.getValue()).thenReturn(1161L);
 
-        Instrument sut = new Instrument("aaa",
-                                        maxPriceCalculator,
-                                        timeGapCalculator,
-                                        totalVolumeCalculator,
-                                        weightedAvgCalculator);
+        List<OutputCalculator> calculators = Arrays.asList(
+                timeGapCalculator,
+                totalVolumeCalculator,
+                weightedAvgCalculator,
+                maxPriceCalculator);
+
+
+        Instrument sut = new InstrumentImpl("aaa", calculators);
 
         InstrumentSummary instrumentSummary = sut.getInstrumentSummary();
         validateInstrumentSummary(instrumentSummary);
@@ -87,9 +95,6 @@ public class InstrumentTests {
 
     private static void validateInstrumentSummary(InstrumentSummary instrumentSummary) {
         Assert.assertEquals("aaa", instrumentSummary.getSymbol());
-        Assert.assertEquals(5787L, instrumentSummary.getMaxTimeGap());
-        Assert.assertEquals(40, instrumentSummary.getTotalVolume());
-        Assert.assertEquals(1161L, instrumentSummary.getWeightedAvgPrice());
-        Assert.assertEquals(1222L, instrumentSummary.getMaxPrice());
+        Assert.assertEquals("aaa,5787,40,1161,1222\n", instrumentSummary.toCsvString());
     }
 }

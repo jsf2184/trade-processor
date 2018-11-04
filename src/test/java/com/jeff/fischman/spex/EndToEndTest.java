@@ -28,7 +28,8 @@ public class EndToEndTest
 
         Stream<String> sampleStream = CannedData.WriteupSampleInput.stream();
         Printer.CapturePrinter capturePrinter = new Printer.CapturePrinter();
-        Bootstrapper bootstrapper = new Bootstrapper.Test(sampleStream, capturePrinter);
+        List<OutputField> outputFields = Arrays.asList(OutputField.values());
+        Bootstrapper bootstrapper = new Bootstrapper(sampleStream, outputFields, capturePrinter);
         Processor processor = bootstrapper.create();
         processor.run();
 

@@ -24,7 +24,7 @@ public class App
         Stream<String> inputStream = argParser.getInputStream();
         try {
             Printer printer = new Printer.FilePrinter(argParser.getOutputFileName());
-            Bootstrapper bootstrapper = new Bootstrapper(inputStream, printer);
+            Bootstrapper bootstrapper = new Bootstrapper(inputStream, argParser.getOutputFields(),  printer);
             Processor processor = bootstrapper.create();
             processor.run();
         } catch (IOException e) {

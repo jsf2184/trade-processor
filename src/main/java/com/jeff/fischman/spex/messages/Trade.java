@@ -4,10 +4,10 @@ import javax.lang.model.type.ErrorType;
 import java.util.Objects;
 
 public class Trade {
-    private final long _timestamp;
-    private final String _symbol;
-    private final long _quantity;
-    private final long _price;
+    protected   long _timestamp;
+    protected  String _symbol;
+    protected  long _quantity;
+    protected  long _price;
 
     public Trade(long timestamp, String symbol, long quantity, long price) {
         _timestamp = timestamp;
@@ -15,6 +15,12 @@ public class Trade {
         _quantity = quantity;
         _price = price;
     }
+
+    public Trade(Trade src) {
+        this(src._timestamp, src._symbol, src._quantity, src._price);
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
 
     public long getTimestamp() {
         return _timestamp;
@@ -42,10 +48,22 @@ public class Trade {
                 '}';
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        Trade trade = (Trade) o;
+//        return _timestamp == trade._timestamp &&
+//                _quantity == trade._quantity &&
+//                _price == trade._price &&
+//                Objects.equals(_symbol, trade._symbol);
+//    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Trade)) return false;
         Trade trade = (Trade) o;
         return _timestamp == trade._timestamp &&
                 _quantity == trade._quantity &&
@@ -53,4 +71,8 @@ public class Trade {
                 Objects.equals(_symbol, trade._symbol);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(_timestamp, _symbol, _quantity, _price);
+    }
 }

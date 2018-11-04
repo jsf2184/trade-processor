@@ -1,5 +1,6 @@
 package com.jeff.fischman.spex.process.calculator;
 
+import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
 
 public class WeightedAvgCalculator implements OutputCalculator {
@@ -15,6 +16,11 @@ public class WeightedAvgCalculator implements OutputCalculator {
     {
         _runningCostTotal = runningCostTotal;
         _runningQtyTotal = runningQtyTotal;
+    }
+
+    @Override
+    public void onTrade(Trade trade) {
+        onTrade(trade.getPrice(), trade.getQuantity());
     }
 
     public void onTrade(long price, long qty) {

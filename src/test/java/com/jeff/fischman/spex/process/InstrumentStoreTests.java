@@ -1,10 +1,13 @@
 package com.jeff.fischman.spex.process;
 
+import com.jeff.fischman.spex.OutputField;
 import com.jeff.fischman.spex.process.output.Printer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
+
+import java.util.Arrays;
 
 import static org.mockito.Mockito.mock;
 
@@ -40,7 +43,8 @@ public class InstrumentStoreTests {
 
     private  InstrumentStore createSut() {
         _printer = mock(Printer.class);
-        InstrumentStore res = new InstrumentStore(_printer);
+        OutputCalculatorFactory outputCalculatorFactory = new OutputCalculatorFactory(Arrays.asList(OutputField.values()));
+        InstrumentStore res = new InstrumentStore(_printer, outputCalculatorFactory);
         return res;
     }
 }

@@ -1,5 +1,6 @@
 package com.jeff.fischman.spex.process.calculator;
 
+import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.process.calculator.components.AdditionAccumulator;
 
 public class TotalVolumeCalculator implements OutputCalculator {
@@ -11,6 +12,11 @@ public class TotalVolumeCalculator implements OutputCalculator {
 
     public TotalVolumeCalculator(AdditionAccumulator additionAccumulator) {
         _additionAccumulator = additionAccumulator;
+    }
+
+    @Override
+    public void onTrade(Trade trade) {
+        onValue(trade.getQuantity());
     }
 
     public void onValue(long qty) {
