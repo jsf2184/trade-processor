@@ -34,9 +34,9 @@ public class EndToEndTest
         processor.run();
 
         List<String> expectedOutputList = Arrays.asList(
-                "aaa,5787,40,1161,1222",
-                "aab,6103,69,810,907",
-                "aac,3081,41,559,638"
+                "aaa,5787,40,1161,1222,1145",
+                "aab,6103,69,810,907,795",
+                "aac,3081,41,559,638,557"
         );
 
         String expectedOutput = StringUtility.toMulitLineString(expectedOutputList);

@@ -10,7 +10,9 @@ public enum OutputField {
     timegap('g', TimeGapCalculator::new),
     volume('v', TotalVolumeCalculator::new),
     wavg('w', WeightedAvgCalculator::new),
-    maxprice('m', MaxPriceCalculator::new);
+    maxprice('m', MaxPriceCalculator::new),
+    avgprice('a', AvgPriceCalculator::new);
+
 
     char _abbrev;
     private Supplier<OutputCalculator> _supplier;

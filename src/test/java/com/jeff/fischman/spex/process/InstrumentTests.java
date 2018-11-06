@@ -17,6 +17,7 @@ import com.jeff.fischman.spex.messages.Trade;
 import com.jeff.fischman.spex.process.calculator.*;
 import org.junit.Assert;
 import org.junit.Test;
+import sun.management.Agent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -80,11 +81,16 @@ public class InstrumentTests {
         WeightedAvgCalculator weightedAvgCalculator = mock(WeightedAvgCalculator.class);
         when(weightedAvgCalculator.getValue()).thenReturn(1161L);
 
+        AvgPriceCalculator avgPriceCalculator = mock(AvgPriceCalculator.class);
+        when(avgPriceCalculator.getValue()).thenReturn(1145L);
+
+
         List<OutputCalculator> calculators = Arrays.asList(
                 timeGapCalculator,
                 totalVolumeCalculator,
                 weightedAvgCalculator,
-                maxPriceCalculator);
+                maxPriceCalculator,
+                avgPriceCalculator);
 
 
         Instrument sut = new InstrumentImpl("aaa", calculators);
@@ -95,6 +101,6 @@ public class InstrumentTests {
 
     private static void validateInstrumentSummary(InstrumentSummary instrumentSummary) {
         Assert.assertEquals("aaa", instrumentSummary.getSymbol());
-        Assert.assertEquals("aaa,5787,40,1161,1222\n", instrumentSummary.toCsvString());
+        Assert.assertEquals("aaa,5787,40,1161,1222,1145\n", instrumentSummary.toCsvString());
     }
 }
